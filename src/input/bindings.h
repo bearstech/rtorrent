@@ -40,7 +40,7 @@
 #include <map>
 #include <tr1/functional>
 
-#include "display/attributes.h"
+/* #include "display/attributes.h" */
 
 namespace input {
 

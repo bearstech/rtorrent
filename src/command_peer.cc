@@ -47,7 +47,7 @@
 #include <torrent/peer/peer_info.h>
 
 #include "core/manager.h"
-#include "display/utils.h"
+// #include "display/utils.h"
 
 #include "globals.h"
 #include "control.h"
@@ -80,7 +80,7 @@ retrieve_p_port(torrent::Peer* peer) {
 torrent::Object
 retrieve_p_client_version(torrent::Peer* peer) {
   char buf[128];
-  display::print_client_version(buf, buf + 128, peer->peer_info()->client_info());
+  // display::print_client_version(buf, buf + 128, peer->peer_info()->client_info());
 
   return std::string(buf);
 }

@@ -191,7 +191,7 @@ parse_command_file(const std::string& path) {
   unsigned int lineNumber = 0;
   char buffer[4096];
 
-  try {
+  // try {
     unsigned int getCount = 0;
 
     while (file.good()
@@ -225,11 +225,11 @@ parse_command_file(const std::string& path) {
       getCount = 0;
     }
 
-  } catch (torrent::input_error& e) {
-    snprintf(buffer, 2048, "Error in option file: %s:%u: %s", path.c_str(), lineNumber, e.what());
+  // } catch (torrent::input_error& e) {
+  //   snprintf(buffer, 2048, "Error in option file: %s:%u: %s", path.c_str(), lineNumber, e.what());
 
-    throw torrent::input_error(buffer);
-  }
+  //   throw torrent::input_error(buffer);
+  // }
 
   return true;
 }

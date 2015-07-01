@@ -1,9 +1,7 @@
 SUBDIRS = \
 	core \
-	display \
 	input \
 	rpc \
-	ui \
 	utils
 
 noinst_LIBRARIES = libsub_root.a
@@ -41,9 +39,7 @@ bin_PROGRAMS = rtorrent
 
 rtorrent_LDADD = \
 	libsub_root.a \
-	ui/libsub_ui.a \
 	core/libsub_core.a \
-	display/libsub_display.a \
 	input/libsub_input.a \
 	rpc/libsub_rpc.a \
 	utils/libsub_utils.a \

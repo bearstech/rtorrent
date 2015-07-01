@@ -54,7 +54,7 @@
 #include "core/download.h"
 #include "core/manager.h"
 #include "rpc/scgi.h"
-#include "ui/root.h"
+//#include "ui/root.h"
 #include "rpc/parse.h"
 #include "rpc/parse_commands.h"
 

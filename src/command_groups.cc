@@ -41,7 +41,7 @@
 #include <torrent/download/choke_queue.h>
 #include <torrent/utils/option_strings.h>
 
-#include "ui/root.h"
+// #include "ui/root.h"
 #include "rpc/parse.h"
 #include "rpc/parse_commands.h"
 

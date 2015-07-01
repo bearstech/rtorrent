@@ -41,9 +41,12 @@
 #include <torrent/throttle.h>
 #include <torrent/rate.h>
 #include <torrent/download/resource_manager.h>
+#include <torrent/manager.h>
+
+
 
 #include "core/manager.h"
-#include "ui/root.h"
+// #include "ui/root.h"
 #include "rpc/parse.h"
 #include "rpc/parse_commands.h"
 
@@ -166,10 +169,88 @@ torrent::Object
 throttle_update(const char* variable, int64_t value) {
   rpc::commands.call_command(variable, value);
 
-  control->ui()->adjust_up_throttle(0);
-  control->ui()->adjust_down_throttle(0);
+  // control->ui()->adjust_up_throttle(0);
+  // control->ui()->adjust_down_throttle(0);
   return torrent::Object();
 }
+
+// ----------------------------------------------------------------------------
+// move ui function that touch the throttle here (cf ui/root.cc et ui/root.h)
+// all ui code still here but commented
+
+
+void
+set_up_throttle(unsigned int throttle) {
+  // if (m_windowStatusbar != NULL)
+  //   m_windowStatusbar->mark_dirty();
+
+  torrent::up_throttle_global()->set_max_rate(throttle * 1024);
+
+  unsigned int div    = std::max<int>(rpc::call_command_value("throttle.max_uploads.div"), 0);
+  unsigned int global = std::max<int>(rpc::call_command_value("throttle.max_uploads.global"), 0);
+
+  if (throttle == 0 || div == 0) {
+    torrent::resource_manager()->set_max_upload_unchoked(global);
+    return;
+  }
+
+  throttle /= div;
+
+  unsigned int maxUnchoked;
+
+  if (throttle <= 10)
+    maxUnchoked = 1 + throttle / 1;
+  else
+    maxUnchoked = 10 + throttle / 5;
+
+  if (global != 0)
+    torrent::resource_manager()->set_max_upload_unchoked(std::min(maxUnchoked, global));
+  else
+    torrent::resource_manager()->set_max_upload_unchoked(maxUnchoked);
+}
+
+void
+set_down_throttle(unsigned int throttle) {
+  // if (m_windowStatusbar != NULL)
+  //   m_windowStatusbar->mark_dirty();
+
+  torrent::down_throttle_global()->set_max_rate(throttle * 1024);
+
+  unsigned int div    = std::max<int>(rpc::call_command_value("throttle.max_downloads.div"), 0);
+  unsigned int global = std::max<int>(rpc::call_command_value("throttle.max_downloads.global"), 0);
+
+  if (throttle == 0 || div == 0) {
+    torrent::resource_manager()->set_max_download_unchoked(global);
+    return;
+  }
+
+  throttle /= div;
+
+  unsigned int maxUnchoked;
+
+  if (throttle <= 10)
+    maxUnchoked = 1 + throttle / 1;
+  else
+    maxUnchoked = 10 + throttle / 5;
+
+  if (global != 0)
+    torrent::resource_manager()->set_max_download_unchoked(std::min(maxUnchoked, global));
+  else
+    torrent::resource_manager()->set_max_download_unchoked(maxUnchoked);
+}
+
+
+void                set_down_throttle_i64(int64_t throttle) { set_down_throttle(throttle >> 10); }
+void                set_up_throttle_i64(int64_t throttle)   { set_up_throttle(throttle >> 10); }
+
+
+
+// end 
+// ----------------------------------------------------------------------------
+
+
+
+
 
 void
 initialize_command_throttle() {
@@ -205,13 +286,41 @@ initialize_command_throttle() {
   CMD2_ANY         ("throttle.global_up.rate",              tr1::bind(&torrent::Rate::rate, torrent::up_rate()));
   CMD2_ANY         ("throttle.global_up.total",             tr1::bind(&torrent::Rate::total, torrent::up_rate()));
   CMD2_ANY         ("throttle.global_up.max_rate",          tr1::bind(&torrent::Throttle::max_rate, torrent::up_throttle_global()));
-  CMD2_ANY_VALUE_V ("throttle.global_up.max_rate.set",      tr1::bind(&ui::Root::set_up_throttle_i64, control->ui(), tr1::placeholders::_2));
-  CMD2_ANY_VALUE_KB("throttle.global_up.max_rate.set_kb",   tr1::bind(&ui::Root::set_up_throttle_i64, control->ui(), tr1::placeholders::_2));
   CMD2_ANY         ("throttle.global_down.rate",            tr1::bind(&torrent::Rate::rate, torrent::down_rate()));
   CMD2_ANY         ("throttle.global_down.total",           tr1::bind(&torrent::Rate::total, torrent::down_rate()));
   CMD2_ANY         ("throttle.global_down.max_rate",        tr1::bind(&torrent::Throttle::max_rate, torrent::down_throttle_global()));
-  CMD2_ANY_VALUE_V ("throttle.global_down.max_rate.set",    tr1::bind(&ui::Root::set_down_throttle_i64, control->ui(), tr1::placeholders::_2));
-  CMD2_ANY_VALUE_KB("throttle.global_down.max_rate.set_kb", tr1::bind(&ui::Root::set_down_throttle_i64, control->ui(), tr1::placeholders::_2));
+
+  // ----------------------------------------------------------------------------
+  // need to change throttle management when it call an ui function
+
+
+  // CMD2_ANY_VALUE_V ("throttle.global_up.max_rate.set",      tr1::bind(&ui::Root::set_up_throttle_i64, control->ui(), tr1::placeholders::_2));
+  CMD2_ANY_VALUE_V ("throttle.global_up.max_rate.set",      tr1::bind(set_up_throttle_i64, tr1::placeholders::_2));
+
+
+  // CMD2_ANY_VALUE_KB("throttle.global_up.max_rate.set_kb",   tr1::bind(&ui::Root::set_up_throttle_i64, control->ui(), tr1::placeholders::_2));
+  CMD2_ANY_VALUE_KB("throttle.global_up.max_rate.set_kb",   tr1::bind(set_up_throttle_i64, tr1::placeholders::_2));
+
+
+  // CMD2_ANY_VALUE_V ("throttle.global_down.max_rate.set",    tr1::bind(&ui::Root::set_down_throttle_i64, control->ui(), tr1::placeholders::_2));
+  CMD2_ANY_VALUE_V ("throttle.global_down.max_rate.set",    tr1::bind(set_down_throttle_i64, tr1::placeholders::_2));
+
+
+  // CMD2_ANY_VALUE_KB("throttle.global_down.max_rate.set_kb", tr1::bind(&ui::Root::set_down_throttle_i64, control->ui(), tr1::placeholders::_2));
+  CMD2_ANY_VALUE_KB("throttle.global_down.max_rate.set_kb", tr1::bind(set_down_throttle_i64, tr1::placeholders::_2));
+
+
+
+
+  // Cinego variables
+  CMD2_ANY_VALUE_V        ("Cinego.speed.up",   tr1::bind(&torrent::Manager::cinego_speed_up_set, torrent::main_manager(), tr1::placeholders::_2));
+  CMD2_ANY_VALUE_V        ("Cinego.speed.down",   tr1::bind(&torrent::Manager::cinego_speed_down_set, torrent::main_manager(), tr1::placeholders::_2));
+  CMD2_ANY_STRING_V        ("Cinego.token.process",   tr1::bind(&torrent::Manager::cinego_token_process_set, torrent::main_manager(), tr1::placeholders::_2));
+
+
+  // ----------------------------------------------------------------------------
+
+
 
   // Temporary names, need to change this to accept real rates rather
   // than kB.

@@ -43,6 +43,7 @@
 #include <sstream>
 #include <string>
 #include <inttypes.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <torrent/http.h>
 #include <torrent/torrent.h>
@@ -62,9 +63,9 @@
 #include "core/download_factory.h"
 #include "core/download_store.h"
 #include "core/manager.h"
-#include "display/canvas.h"
-#include "display/window.h"
-#include "display/manager.h"
+// #include "display/canvas.h"
+// #include "display/window.h"
+// #include "display/manager.h"
 #include "input/bindings.h"
 
 #include "rpc/command_scheduler.h"
@@ -90,7 +91,7 @@ void do_nothing_str(const std::string&) {}
 
 int
 parse_options(Control* c, int argc, char** argv) {
-  try {
+  // try {
     OptionParser optionParser;
 
     // Converted.
@@ -111,9 +112,9 @@ parse_options(Control* c, int argc, char** argv) {
 
     return optionParser.process(argc, argv);
 
-  } catch (torrent::input_error& e) {
-    throw torrent::input_error("Failed to parse command line option: " + std::string(e.what()));
-  }
+  // } catch (torrent::input_error& e) {
+  //   throw torrent::input_error("Failed to parse command line option: " + std::string(e.what()));
+  // }
 }
 
 void
@@ -196,7 +197,7 @@ main(int argc, char** argv) {
     SignalHandler::set_ignore(SIGPIPE);
     SignalHandler::set_handler(SIGINT,   std::tr1::bind(&Control::receive_normal_shutdown, control));
     SignalHandler::set_handler(SIGTERM,  std::tr1::bind(&Control::receive_quick_shutdown, control));
-    SignalHandler::set_handler(SIGWINCH, std::tr1::bind(&display::Manager::force_redraw, control->display()));
+    // SignalHandler::set_handler(SIGWINCH, std::tr1::bind(&display::Manager::force_redraw, control->display()));
     SignalHandler::set_handler(SIGSEGV,  std::tr1::bind(&do_panic, SIGSEGV));
     SignalHandler::set_handler(SIGILL,   std::tr1::bind(&do_panic, SIGILL));
     SignalHandler::set_handler(SIGFPE,   std::tr1::bind(&do_panic, SIGFPE));
@@ -398,6 +399,12 @@ main(int argc, char** argv) {
     CMD2_REDIRECT_GENERIC("session",   "session.path.set");
 
     CMD2_REDIRECT        ("key_layout", "keys.layout.set");
+
+    //Cinego command
+    CMD2_REDIRECT        ("Ci_speed_up", "Cinego.speed.up");
+    CMD2_REDIRECT        ("Ci_speed_down", "Cinego.speed.down");
+    CMD2_REDIRECT        ("Ci_token_pro", "Cinego.token.process");
+
 
     // Deprecated commands. Don't use these anymore.
 
@@ -849,8 +856,8 @@ main(int argc, char** argv) {
     // Make sure we update the display before any scheduled tasks can
     // run, so that loading of torrents doesn't look like it hangs on
     // startup.
-    control->display()->adjust_layout();
-    control->display()->receive_update();
+    // control->display()->adjust_layout();
+    // control->display()->receive_update();
 
     worker_thread->start_thread();
 
@@ -890,7 +897,7 @@ handle_sigbus(int signum, siginfo_t* sa, void* ptr) {
     do_panic(signum);
 
   SignalHandler::set_default(signum);
-  display::Canvas::cleanup();
+  // display::Canvas::cleanup();
 
   std::stringstream output;
   output << "Caught SIGBUS, dumping stack:" << std::endl;
@@ -960,7 +967,7 @@ do_panic(int signum) {
   // Use the default signal handler in the future to avoid infinit
   // loops.
   SignalHandler::set_default(signum);
-  display::Canvas::cleanup();
+  // display::Canvas::cleanup();
 
   std::stringstream output;
 

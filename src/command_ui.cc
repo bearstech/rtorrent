@@ -44,8 +44,8 @@
 
 #include "core/manager.h"
 #include "core/view_manager.h"
-#include "ui/root.h"
-#include "ui/download_list.h"
+//#include "ui/root.h"
+//#include "ui/download_list.h"
 #include "rpc/parse.h"
 
 #include "globals.h"
@@ -297,10 +297,10 @@ apply_to_time(const torrent::Object& rawArgs, int flags) {
 
   char buffer[11];
 
-  if (flags & 0x2)
-    snprintf(buffer, 11, "%02u/%02u/%04u", u->tm_mday, (u->tm_mon + 1), (1900 + u->tm_year));
-  else
-    snprintf(buffer, 9, "%2d:%02d:%02d", u->tm_hour, u->tm_min, u->tm_sec);
+  // if (flags & 0x2)
+  //   snprintf(buffer, 11, "%02u/%02u/%04u", u->tm_mday, (u->tm_mon + 1), (1900 + u->tm_year));
+  // else
+  //   snprintf(buffer, 9, "%2d:%02d:%02d", u->tm_hour, u->tm_min, u->tm_sec);
 
   return std::string(buffer);
 }
@@ -310,7 +310,7 @@ apply_to_elapsed_time(const torrent::Object& rawArgs) {
   uint64_t arg = cachedTime.seconds() - rawArgs.as_value();
 
   char buffer[48];
-  snprintf(buffer, 48, "%2d:%02d:%02d", (int)(arg / 3600), (int)((arg / 60) % 60), (int)(arg % 60));
+  // snprintf(buffer, 48, "%2d:%02d:%02d", (int)(arg / 3600), (int)((arg / 60) % 60), (int)(arg % 60));
 
   return std::string(buffer);
 }
@@ -318,7 +318,7 @@ apply_to_elapsed_time(const torrent::Object& rawArgs) {
 torrent::Object
 apply_to_kb(const torrent::Object& rawArgs) {
   char buffer[32];
-  snprintf(buffer, 32, "%5.1f", (double)rawArgs.as_value() / (1 << 10));
+  // snprintf(buffer, 32, "%5.1f", (double)rawArgs.as_value() / (1 << 10));
 
   return std::string(buffer);
 }
@@ -326,7 +326,7 @@ apply_to_kb(const torrent::Object& rawArgs) {
 torrent::Object
 apply_to_mb(const torrent::Object& rawArgs) {
   char buffer[32];
-  snprintf(buffer, 32, "%8.1f", (double)rawArgs.as_value() / (1 << 20));
+  // snprintf(buffer, 32, "%8.1f", (double)rawArgs.as_value() / (1 << 20));
 
   return std::string(buffer);
 }
@@ -336,14 +336,14 @@ apply_to_xb(const torrent::Object& rawArgs) {
   char buffer[48];
   int64_t arg = rawArgs.as_value();  
 
-  if (arg < (int64_t(1000) << 10))
-    snprintf(buffer, 48, "%5.1f KB", (double)arg / (int64_t(1) << 10));
-  else if (arg < (int64_t(1000) << 20))
-    snprintf(buffer, 48, "%5.1f MB", (double)arg / (int64_t(1) << 20));
-  else if (arg < (int64_t(1000) << 30))
-    snprintf(buffer, 48, "%5.1f GB", (double)arg / (int64_t(1) << 30));
-  else
-    snprintf(buffer, 48, "%5.1f TB", (double)arg / (int64_t(1) << 40));
+  // if (arg < (int64_t(1000) << 10))
+  //   snprintf(buffer, 48, "%5.1f KB", (double)arg / (int64_t(1) << 10));
+  // else if (arg < (int64_t(1000) << 20))
+  //   snprintf(buffer, 48, "%5.1f MB", (double)arg / (int64_t(1) << 20));
+  // else if (arg < (int64_t(1000) << 30))
+  //   snprintf(buffer, 48, "%5.1f GB", (double)arg / (int64_t(1) << 30));
+  // else
+  //   snprintf(buffer, 48, "%5.1f TB", (double)arg / (int64_t(1) << 40));
 
   return std::string(buffer);
 }
@@ -357,7 +357,7 @@ apply_to_throttle(const torrent::Object& rawArgs) {
     return "off";
 
   char buffer[32];
-  snprintf(buffer, 32, "%3d", (int)(arg / (1 << 10)));
+  // snprintf(buffer, 32, "%3d", (int)(arg / (1 << 10)));
   return std::string(buffer);
 }
 
@@ -462,13 +462,13 @@ cmd_view_persistent(const torrent::Object::string_type& args) {
 // TODO: These don't need wrapper functions anymore...
 torrent::Object
 cmd_ui_set_view(const torrent::Object::string_type& args) {
-  control->ui()->download_list()->set_current_view(args);
+  // control->ui()->download_list()->set_current_view(args);
   return torrent::Object();
 }
 
 torrent::Object
 cmd_ui_unfocus_download(core::Download* download) {
-  control->ui()->download_list()->unfocus_download(download);
+  // control->ui()->download_list()->unfocus_download(download);
 
   return torrent::Object();
 }

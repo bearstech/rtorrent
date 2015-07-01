@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#include "display/attributes.h"
+// #include "display/attributes.h"
 
 #include "text_input.h"
 
@@ -70,39 +70,39 @@ TextInput::pressed(int key) {
     switch (key) {
     case 0x7F:
     case 'h' - 'a' + 1: // ^H
-    case KEY_BACKSPACE:
-      if (m_pos != 0)
-        Base::erase(--m_pos, 1);
+    // case KEY_BACKSPACE:
+    //   if (m_pos != 0)
+    //     Base::erase(--m_pos, 1);
 
-      break;
+    //   break;
 
-    case KEY_DC:
-      if (m_pos != size())
-        Base::erase(m_pos, 1);
+    // case KEY_DC:
+    //   if (m_pos != size())
+    //     Base::erase(m_pos, 1);
 
-      break;
+    //   break;
 
     case 0x02:
-    case KEY_LEFT:
+    // case KEY_LEFT:
       if (m_pos != 0)
         --m_pos;
 
       break;
 
     case 0x06:
-    case KEY_RIGHT:
+    // case KEY_RIGHT:
       if (m_pos != size())
         ++m_pos;
 
       break;
 
-    case KEY_HOME:
-      m_pos = 0;
-      break;
+    // case KEY_HOME:
+    //   m_pos = 0;
+    //   break;
 
-    case KEY_END:
-      m_pos = size();
-      break;
+    // case KEY_END:
+    //   m_pos = size();
+    //   break;
 
     case 'u' - 'a' + 1: // ^U
       Base::erase(0, m_pos);

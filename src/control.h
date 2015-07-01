@@ -43,9 +43,9 @@
 #include <rak/priority_queue_default.h>
 #include <torrent/torrent.h>
 
-namespace ui {
-  class Root;
-}
+/* namespace ui { */
+/*   class Root; */
+/* } */
 
 namespace core {
   class Manager;
@@ -90,8 +90,8 @@ public:
   core::ViewManager*  view_manager()                { return m_viewManager; }
   core::DhtManager*   dht_manager()                 { return m_dhtManager; }
 
-  ui::Root*           ui()                          { return m_ui; }
-  display::Manager*   display()                     { return m_display; }
+  /* ui::Root*           ui()                          { return m_ui; } */
+  /* display::Manager*   display()                     { return m_display; } */
   input::Manager*     input()                       { return m_input; }
   input::InputEvent*  input_stdin()                 { return m_inputStdin; }
 
@@ -112,8 +112,8 @@ private:
   core::ViewManager*  m_viewManager;
   core::DhtManager*   m_dhtManager;
 
-  ui::Root*           m_ui;
-  display::Manager*   m_display;
+  /* ui::Root*           m_ui; */
+  /* display::Manager*   m_display; */
   input::Manager*     m_input;
   input::InputEvent*  m_inputStdin;
 

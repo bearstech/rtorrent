@@ -39,7 +39,7 @@
 #include "input_event.h"
 
 //ncurses.h must be included last since sys/mman.h on Solaris munges ERR.
-#include <ncurses.h>
+// #include <ncurses.h>
 
 namespace input {
 
@@ -59,8 +59,8 @@ void
 InputEvent::event_read() {
   int c;
 
-  while ((c = getch()) != ERR)
-    m_slotPressed(c);
+  // while ((c = getch()) != ERR)
+  //   m_slotPressed(c);
 }
 
 void

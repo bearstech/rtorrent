@@ -38,6 +38,9 @@
 
 #include <algorithm>
 #include <functional>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <rak/path.h>
 #include <torrent/exceptions.h>
@@ -45,6 +48,14 @@
 #ifdef __sun__
 #include <sys/stat.h>
 #endif
+
+
+#ifdef  __CYGWIN32__
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 
 #include "directory.h"
 
@@ -67,6 +78,8 @@ Directory::update(int flags) {
   if (m_path.empty())
     throw torrent::input_error("Directory::update() tried to open an empty path.");
 
+  std::string path=rak::path_expand(m_path);
+
   DIR* d = opendir(rak::path_expand(m_path).c_str());
 
   if (d == NULL)
@@ -81,14 +94,30 @@ Directory::update(int flags) {
     if ((flags & update_hide_dot) && entry->d_name[0] == '.')
       continue;
 
-    iterator itr = base_type::insert(end(), value_type());
 
 #ifdef __sun__
+    iterator itr = base_type::insert(end(), value_type());
     stat(entry->d_name, &s);
     itr->d_fileno = entry->d_ino;
     itr->d_reclen = 0;
     itr->d_type = s.st_mode;
+#elif __CYGWIN__
+    std::string full_path=path+'/';
+    full_path+=entry->d_name;
+    
+    struct stat sb;
+    if(stat(full_path.c_str(),&sb))
+      continue;
+
+    iterator itr = base_type::insert(end(),value_type());
+    
+    itr->d_fileno = sb.st_ino;
+    itr->d_reclen = 0; // doesn't seem to get used anywhere.
+    itr->d_type   = sb.st_mode;
+
+
 #else
+    iterator itr = base_type::insert(end(), value_type());
     itr->d_fileno = entry->d_fileno;
     itr->d_reclen = entry->d_reclen;
     itr->d_type   = entry->d_type;

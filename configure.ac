@@ -31,15 +31,10 @@ TORRENT_WITHOUT_STATVFS()
 TORRENT_WITHOUT_STATFS()
 
 AX_PTHREAD([], AC_MSG_ERROR([requires pthread]))
-AX_WITH_CURSES()
+CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+LIBS="$PTHREAD_LIBS $LIBS"
 
-if test "x$ax_cv_ncursesw" != xyes && test "x$ax_cv_ncurses" != xyes; then
-   AC_MSG_ERROR([requires either NcursesW or Ncurses library])
-fi
-
-CFLAGS="$CFLAGS $PTHREAD_CFLAGS $CURSES_CFLAGS"
-CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS $CURSES_CFLAGS"
-LIBS="$PTHREAD_LIBS $CURSES_LIB $LIBS"
 
 PKG_CHECK_MODULES([libcurl], libcurl >= 7.15.4,
 	          CXXFLAGS="$CXXFLAGS $libcurl_CFLAGS";
@@ -70,10 +65,8 @@ AC_OUTPUT([
 	doc/Makefile
 	src/Makefile
 	src/core/Makefile
-	src/display/Makefile
 	src/input/Makefile
 	src/rpc/Makefile
-	src/ui/Makefile
 	src/utils/Makefile
         test/Makefile
 ])
